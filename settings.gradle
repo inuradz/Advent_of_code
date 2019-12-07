@@ -1,4 +1,5 @@
 rootProject.name = 'advent_of_code_2019'
 
-include 'day1'
-include 'day2'
+include 'rocketEquation'
+include 'intcode'
+include 'secureContainers'

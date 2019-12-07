@@ -1,4 +1,4 @@
-package day1;
+package RocketEquation;
 import java.math.*;
 import java.util.Scanner;
 

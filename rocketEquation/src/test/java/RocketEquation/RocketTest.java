@@ -1,4 +1,4 @@
-package day1;
+package RocketEquation;
 
 import org.junit.Assert;
 import org.junit.Before;
