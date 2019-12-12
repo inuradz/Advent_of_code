@@ -3,6 +3,10 @@ import javax.swing.plaf.nimbus.State;
 import java.math.*;
 import java.util.*;
 
+/**
+ * This is designed to complete day2 challenge
+ */
+
 public class StateMachine {
 
     private List<Integer> state;
