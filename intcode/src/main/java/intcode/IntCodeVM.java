@@ -40,7 +40,7 @@ public class IntCodeVM {
         StringBuilder sb = new StringBuilder();
         Boolean start = true;
         sb.append("[");
-        Integer counter = 0;
+        Integer counter = 1;
         for(Integer i: memory){
             if(!start){
                 sb.append(", ");
@@ -54,13 +54,13 @@ public class IntCodeVM {
     }
 
     void loadNumber(Integer address){
-        log.info("Loading Direct Value {}",memory.get(address));
+        log.debug("Loading Direct Value {}",memory.get(address));
         data_stack.push(memory.get(address));
         instructionPointer++;
     }
 
     void loadNumberFromAddress(Integer address){
-        log.info("Loading Value From Memory Address {} which contains {}",memory.get(address),memory.get(memory.get(address)));
+        log.debug("Loading Value From Memory Address {} which contains {}",memory.get(address),memory.get(memory.get(address)));
         data_stack.push(memory.get(memory.get(address)));
         instructionPointer++;
     }
@@ -81,6 +81,13 @@ public class IntCodeVM {
         }
     }
 
+    void swapTopTwo(){
+        Integer first   = data_stack.pop();
+        Integer second  = data_stack.pop();
+        data_stack.push(first);
+        data_stack.push(second);
+    }
+
     /***
      *
      * @return Whether or not an endstate has been reached
@@ -88,35 +95,72 @@ public class IntCodeVM {
     boolean interpretInstruction(){
         String instruction = String.format("%05d",memory.get(instructionPointer));
         instructionPointer++;
+        Integer result;
         switch (instruction.substring(3)){
             case "01":
                 //This is an addition operation
-                log.info("Running add instruction | {} | at location {}",instruction,instructionPointer);
+                log.debug("Running add instruction | {} | at location {}",instruction,instructionPointer);
                 loadNextIntegersSequence(instruction,2);
                 loadNumber(this.instructionPointer);
                 memory.set(data_stack.pop(),data_stack.pop()+data_stack.pop());
                 break;
             case "02":
                 //This is a multiplication operation
-                log.info("Running multiply instruction | {} | at location {}",instruction,instructionPointer);
+                log.debug("Running multiply instruction | {} | at location {}",instruction,instructionPointer);
                 loadNextIntegersSequence(instruction,2);
                 loadNumber(this.instructionPointer);
                 memory.set(data_stack.pop(),data_stack.pop()*data_stack.pop());
                 break;
             case "03":
                 //Read in an integer
-                log.info("Reading in an integer | {} | at location {}",instruction,instructionPointer);
+                log.debug("Reading in an integer | {} | at location {}",instruction,instructionPointer);
                 loadNumber(this.instructionPointer);
                 memory.set(data_stack.pop(),in.nextInt());
                 break;
             case "04":
                 //Outputs an integer
-                log.info("Outputting an integer | {} | at location {}",instruction,instructionPointer);
+                log.debug("Outputting an integer | {} | at location {}",instruction,instructionPointer);
                 loadNextIntegersSequence(instruction,1);
                 out.print(data_stack.pop());
                 break;
+            case "05":
+                //Conditional jump if true(Non zero)
+                log.debug("Conditional Jump if true | {} | at location {}",instruction,instructionPointer);
+                loadNextIntegersSequence(instruction,1);
+                swapTopTwo();
+                if(data_stack.pop() != 0){
+                    instructionPointer = data_stack.pop();
+                } else {
+                    data_stack.pop();
+                }
+                break;
+            case "06":
+                //Conditional jump if false(zero)
+                log.debug("Conditional Jump if false | {} | at location {}",instruction,instructionPointer);
+                loadNextIntegersSequence(instruction,1);
+                if(data_stack.pop() == 0){
+                    instructionPointer = data_stack.pop();
+                } else {
+                    data_stack.pop();
+                }
+                break;
+            case "07":
+                //If less than return 1 else 0
+                log.debug("less than | {} | at location {}",instruction,instructionPointer);
+                loadNextIntegersSequence(instruction,2);
+                swapTopTwo();
+                loadNumber(this.instructionPointer);
+                memory.set(data_stack.pop(),data_stack.pop() < data_stack.pop() ? 1 : 0);
+                break;
+            case "08":
+                //Return true if both are equal
+                log.debug("less than | {} | at location {}",instruction,instructionPointer);
+                loadNextIntegersSequence(instruction,2);
+                loadNumber(this.instructionPointer);
+                memory.set(data_stack.pop(),data_stack.pop() == data_stack.pop() ? 1 : 0);
+                break;
             case "99":
-                log.info("STOP instruction | {} | at location {}",instruction,instructionPointer);
+                log.debug("STOP instruction | {} | at location {}",instruction,instructionPointer);
                 return true;
             default:
                 throw new IllegalArgumentException("Unknow argument" + instruction);
