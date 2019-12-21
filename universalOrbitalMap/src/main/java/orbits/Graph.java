@@ -19,10 +19,19 @@ public class Graph {
         graph.computeIfAbsent(from,k -> new LinkedList<>()).add(e);
     }
 
-
-
     public List<Edge> getOutgoingEdges(String node){
         return graph.get(node);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb =  new StringBuilder();
+        for(Map.Entry<String,List<Edge>> node : graph.entrySet()){
+            sb.append(node.getKey());
+            sb.append(":");
+            sb.append(node.getValue());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }

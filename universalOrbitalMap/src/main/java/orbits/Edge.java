@@ -24,5 +24,12 @@ public class Edge {
         this.length = length;
     }
 
+    public Edge reverseLink(){
+        return new Edge(this.from,this.to,this.length);
+    }
 
+    @Override
+    public String toString() {
+        return String.format("(%s -> %s:%d)",this.from,this.to,this.length);
+    }
 }
