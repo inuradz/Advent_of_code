@@ -2,6 +2,8 @@ package intcode;
 
 import java.io.ByteArrayInputStream;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +16,10 @@ public class RunMachine {
         for(String num : scanner.next().split(",")){
             l.add(Integer.parseInt(num));
         }
-        ByteArrayInputStream b = new ByteArrayInputStream("1".getBytes());
-        IntCodeVM vm = new IntCodeVM(b,System.out,l);
+        ByteArrayInputStream in = new ByteArrayInputStream("1".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM vm = new IntCodeVM(in,out,l);
+        System.out.println(b.toString());
     }
 }

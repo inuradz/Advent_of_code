@@ -1,9 +1,6 @@
 package intcode;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestName;
 
 import java.io.ByteArrayInputStream;
@@ -16,13 +13,16 @@ public class VMTest {
     @Rule
     public TestName name= new TestName();
 
+    @BeforeClass
+    public static void runOnce(){
+        //User to set up the logger beforehand
+        IntCodeVM v = new IntCodeVM(System.in,System.out,Arrays.asList(99));
+    }
+
     @Before
     public void setUP(){
         System.out.println("################" + String.format("%25s",name.getMethodName()) + "################");
     }
-
-
-
 
     //This is the ADD testing
 
@@ -134,6 +134,15 @@ public class VMTest {
     }
 
     @Test
+    public void testWritingDirect(){
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream p = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(System.in,p,Arrays.asList(104,6,99));
+        Assert.assertEquals(s.getState(),Arrays.asList(104,6,99));
+        Assert.assertArrayEquals(b.toByteArray(),"6".getBytes());
+    }
+
+    @Test
     public void testWritingMultiDigit(){
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PrintStream p = new PrintStream(b);
@@ -161,8 +170,131 @@ public class VMTest {
         byte[] output = b.toByteArray();
         int i;
         System.out.println(b.toString());
-        for(i=0;i<output.length-2;i++){
+        for(i=0;i<8;i++){
             Assert.assertEquals(output[i],'0');
         }
     }
+
+    @Test
+    public void testEqualEightPosition(){
+        ByteArrayInputStream in = new ByteArrayInputStream("8".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,9,8,9,10,9,4,9,99,-1,8));
+        Assert.assertArrayEquals(b.toByteArray(),"1".getBytes());
+    }
+
+    @Test
+    public void testNotEqualEightPositionLess(){
+        ByteArrayInputStream in = new ByteArrayInputStream("7".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,9,8,9,10,9,4,9,99,-1,8));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+    @Test
+    public void testNotEqualEightPositionGreater(){
+        ByteArrayInputStream in = new ByteArrayInputStream("9".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,9,8,9,10,9,4,9,99,-1,8));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+    @Test
+    public void testLessThanEightPosition(){
+        ByteArrayInputStream in = new ByteArrayInputStream("7".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,9,7,9,10,9,4,9,99,-1,8));
+        Assert.assertArrayEquals(b.toByteArray(),"1".getBytes());
+    }
+
+    @Test
+    public void testGreaterThanEightPosition(){
+        ByteArrayInputStream in = new ByteArrayInputStream("9".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,9,7,9,10,9,4,9,99,-1,8));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+    @Test
+    public void testEqualEightLessPosition(){
+        ByteArrayInputStream in = new ByteArrayInputStream("8".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,9,7,9,10,9,4,9,99,-1,8));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Test
+    public void testEqualEightImmediate(){
+        ByteArrayInputStream in = new ByteArrayInputStream("8".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,3,1108,-1,8,3,4,3,99));
+        Assert.assertArrayEquals(b.toByteArray(),"1".getBytes());
+    }
+
+    @Test
+    public void testNotEqualEightImmediateLess(){
+        ByteArrayInputStream in = new ByteArrayInputStream("7".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,3,1108,-1,8,3,4,3,99));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+    @Test
+    public void testNotEqualEightImmediateGreater(){
+        ByteArrayInputStream in = new ByteArrayInputStream("9".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,3,1108,-1,8,3,4,3,99));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+    @Test
+    public void testLessThanEightImmediate(){
+        ByteArrayInputStream in = new ByteArrayInputStream("7".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,3,1107,-1,8,3,4,3,99));
+        Assert.assertArrayEquals(b.toByteArray(),"1".getBytes());
+    }
+
+    @Test
+    public void testGreaterThanEightImmediate(){
+        ByteArrayInputStream in = new ByteArrayInputStream("9".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,3,1107,-1,8,3,4,3,99));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+    @Test
+    public void testEqualEightLessImmediate(){
+        ByteArrayInputStream in = new ByteArrayInputStream("8".getBytes());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        IntCodeVM s = new IntCodeVM(in,out,Arrays.asList(3,3,1107,-1,8,3,4,3,99));
+        Assert.assertArrayEquals(b.toByteArray(),"0".getBytes());
+    }
+
+
+
 }
