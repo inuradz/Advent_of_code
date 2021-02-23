@@ -16,7 +16,7 @@ public class RunMachine {
         for(String num : scanner.next().split(",")){
             l.add(Integer.parseInt(num));
         }
-        ByteArrayInputStream in = new ByteArrayInputStream("1".getBytes());
+        ByteArrayInputStream in = new ByteArrayInputStream("5".getBytes());
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(b);
         IntCodeVM vm = new IntCodeVM(in,out,l);

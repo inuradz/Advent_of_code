@@ -126,7 +126,7 @@ public class IntCodeVM {
             case "05":
                 //Conditional jump if true(Non zero)
                 log.debug("Conditional Jump if true | {} | at location {}",instruction,instructionPointer);
-                loadNextIntegersSequence(instruction,1);
+                loadNextIntegersSequence(instruction,2);
                 swapTopTwo();
                 if(data_stack.pop() != 0){
                     instructionPointer = data_stack.pop();
@@ -137,7 +137,8 @@ public class IntCodeVM {
             case "06":
                 //Conditional jump if false(zero)
                 log.debug("Conditional Jump if false | {} | at location {}",instruction,instructionPointer);
-                loadNextIntegersSequence(instruction,1);
+                loadNextIntegersSequence(instruction,2);
+                swapTopTwo();
                 if(data_stack.pop() == 0){
                     instructionPointer = data_stack.pop();
                 } else {
